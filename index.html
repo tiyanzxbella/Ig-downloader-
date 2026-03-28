@@ -80,7 +80,7 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 10px;
+            transition: all 0.3s;
         }
 
         button:hover {
@@ -118,12 +118,14 @@
             display: none;
         }
 
-        .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
+        .result-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
             border-radius: 10px;
-            margin-top: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-weight: 600;
             display: none;
         }
 
@@ -156,21 +158,22 @@
             flex-wrap: wrap;
         }
 
-        .option-title .badge {
+        .badge-video {
+            background: #dc3545;
+            color: white;
             padding: 5px 10px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: normal;
         }
 
-        .badge-video {
-            background: #dc3545;
-            color: white;
-        }
-
         .badge-image {
             background: #28a745;
             color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: normal;
         }
 
         .download-btn {
@@ -181,7 +184,7 @@
             text-decoration: none;
             border-radius: 8px;
             font-weight: 600;
-            margin-top: 10px;
+            margin: 10px 0;
             transition: all 0.3s;
             border: none;
             cursor: pointer;
@@ -205,7 +208,6 @@
             border-radius: 10px;
         }
 
-        /* Metadata styles - dipindah ke bawah preview */
         .metadata {
             background: #f0f2f5;
             border-radius: 12px;
@@ -217,7 +219,6 @@
             font-size: 0.9rem;
             color: #666;
             margin-bottom: 10px;
-            font-weight: 600;
         }
 
         .caption-text {
@@ -242,10 +243,6 @@
             gap: 6px;
             font-size: 0.85rem;
             color: #555;
-        }
-
-        .stat-icon {
-            font-size: 1rem;
         }
 
         .examples {
@@ -278,12 +275,6 @@
             font-size: 0.85rem;
         }
 
-        hr {
-            margin: 20px 0;
-            border: none;
-            border-top: 1px solid #e1e1e1;
-        }
-
         .debug {
             background: #1e1e1e;
             color: #d4d4d4;
@@ -297,16 +288,6 @@
         .debug pre {
             white-space: pre-wrap;
             word-wrap: break-word;
-        }
-
-        .result-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
         }
     </style>
 </head>
@@ -339,7 +320,7 @@
             </div>
 
             <div class="error" id="error"></div>
-            <div id="resultBadge" class="result-badge" style="display: none;"></div>
+            <div class="result-badge" id="resultBadge"></div>
 
             <div class="download-options" id="downloadOptions">
                 <div id="optionsContainer"></div>
@@ -347,13 +328,13 @@
 
             <div class="debug" id="debug">
                 <details>
-                    <summary style="color: #aaa; cursor: pointer;">🔧 Technical Info (Klik jika tidak muncul tombol)</summary>
+                    <summary style="color: #aaa; cursor: pointer;">🔧 Technical Info</summary>
                     <pre id="debugContent">Loading...</pre>
                 </details>
             </div>
         </div>
         <div class="footer">
-            <p>Instagram Downloader - Support Video (Dengan Audio) & Gambar HD</p>
+            <p>Instagram Downloader - Support Video & Gambar HD</p>
         </div>
     </div>
 
@@ -362,76 +343,6 @@
             url: "https://api.termai.cc",
             key: "Bell409"
         };
-
-        // Fungsi untuk mengekstrak metadata (caption, like, comment) dari response API - lebih agresif
-        function extractMetadata(data) {
-            let caption = '';
-            let likeCount = null;
-            let commentCount = null;
-            
-            // Fungsi rekursif untuk mencari semua kemungkinan data
-            function deepSearch(obj, depth = 0) {
-                if (depth > 10 || !obj || typeof obj !== 'object') return;
-                
-                for (let key in obj) {
-                    const value = obj[key];
-                    const lowerKey = key.toLowerCase();
-                    
-                    // Cari caption / title / text
-                    if (!caption && (lowerKey === 'caption' || lowerKey === 'title' || lowerKey === 'text' || 
-                        lowerKey === 'description' || lowerKey === 'content' || lowerKey === 'message')) {
-                        if (typeof value === 'string' && value.length > 0 && value.length < 5000) {
-                            caption = value;
-                        }
-                    }
-                    
-                    // Cari like count
-                    if (likeCount === null && (lowerKey.includes('like') || lowerKey === 'likes' || lowerKey === 'like_count')) {
-                        if (typeof value === 'number') {
-                            likeCount = value;
-                        } else if (typeof value === 'string' && !isNaN(parseInt(value))) {
-                            likeCount = parseInt(value);
-                        }
-                    }
-                    
-                    // Cari comment count
-                    if (commentCount === null && (lowerKey.includes('comment') || lowerKey === 'comments' || lowerKey === 'comment_count')) {
-                        if (typeof value === 'number') {
-                            commentCount = value;
-                        } else if (typeof value === 'string' && !isNaN(parseInt(value))) {
-                            commentCount = parseInt(value);
-                        }
-                    }
-                    
-                    // Rekursif
-                    if (typeof value === 'object' && value !== null) {
-                        deepSearch(value, depth + 1);
-                    }
-                }
-            }
-            
-            deepSearch(data);
-            
-            // Format angka dengan pemisah ribuan
-            const formatNumber = (num) => {
-                if (num === null || num === undefined) return null;
-                if (typeof num === 'string') num = parseInt(num);
-                if (isNaN(num)) return null;
-                return num.toLocaleString('id-ID');
-            };
-            
-            // Bersihkan caption dari karakter aneh
-            if (caption) {
-                caption = caption.replace(/\\n/g, '\n').replace(/\\"/g, '"').trim();
-            }
-            
-            return {
-                caption: caption || 'Tidak ada caption',
-                likeCount: formatNumber(likeCount),
-                commentCount: formatNumber(commentCount),
-                hasData: likeCount !== null || commentCount !== null
-            };
-        }
 
         async function downloadInstagram(url) {
             const loading = document.getElementById('loading');
@@ -465,302 +376,236 @@
                 debugContent.textContent = JSON.stringify(data, null, 2);
                 debug.style.display = 'block';
                 
-                // Extract metadata (caption, like, comment)
+                // Extract metadata
                 const metadata = extractMetadata(data);
-                console.log('Extracted metadata:', metadata);
                 
-                // Kumpulkan semua URL dari response
+                // Extract URLs
                 const allUrls = extractAllUrls(data);
-                console.log('All URLs found:', allUrls);
-                
-                // Pisahkan video dan gambar
                 const videoUrls = [];
                 const imageUrls = [];
                 
                 allUrls.forEach(item => {
                     const urlLower = item.url.toLowerCase();
-                    
-                    // Deteksi video (MP4)
-                    if (urlLower.includes('.mp4') || item.type === 'video' || 
-                        (item.key && (item.key.includes('video') || item.key.includes('url')) && !item.key.includes('thumb'))) {
-                        if (!urlLower.includes('thumb') && !item.key?.includes('thumbnail')) {
+                    if (urlLower.includes('.mp4') || item.type === 'video') {
+                        if (!urlLower.includes('thumb')) {
                             videoUrls.push(item);
                         }
-                    }
-                    // Deteksi gambar (JPG, PNG, JPEG)
-                    else if (urlLower.includes('.jpg') || urlLower.includes('.jpeg') || urlLower.includes('.png') || 
-                             item.type === 'image' || (item.key && (item.key.includes('image') || item.key.includes('photo')))) {
-                        if (!item.key?.includes('profile') && !item.key?.includes('avatar')) {
+                    } else if (urlLower.includes('.jpg') || urlLower.includes('.jpeg') || urlLower.includes('.png')) {
+                        if (!item.key?.includes('profile')) {
                             imageUrls.push(item);
                         }
                     }
                 });
                 
-                // Hapus duplikat berdasarkan URL
                 const uniqueVideos = removeDuplicates(videoUrls, 'url');
                 const uniqueImages = removeDuplicates(imageUrls, 'url');
                 
-                console.log('Videos:', uniqueVideos);
-                console.log('Images:', uniqueImages);
-                
-                let hasOptions = false;
-                
-                // Tampilkan badge hasil
-                const videoCount = uniqueVideos.length;
-                const imageCount = uniqueImages.length;
-                
-                if (videoCount > 0 || imageCount > 0) {
-                    let resultText = '';
-                    if (videoCount > 0 && imageCount > 0) {
-                        resultText = `✅ Berhasil ditemukan ${videoCount} video dan ${imageCount} gambar`;
-                    } else if (videoCount > 0) {
-                        resultText = `✅ Berhasil ditemukan ${videoCount} video`;
-                    } else if (imageCount > 0) {
-                        resultText = `✅ Berhasil ditemukan ${imageCount} gambar`;
+                // Show result badge
+                if (uniqueVideos.length > 0 || uniqueImages.length > 0) {
+                    let text = '✅ Berhasil ditemukan ';
+                    if (uniqueVideos.length > 0 && uniqueImages.length > 0) {
+                        text += `${uniqueVideos.length} video dan ${uniqueImages.length} gambar`;
+                    } else if (uniqueVideos.length > 0) {
+                        text += `${uniqueVideos.length} video`;
+                    } else {
+                        text += `${uniqueImages.length} gambar`;
                     }
-                    resultBadge.textContent = resultText;
+                    resultBadge.textContent = text;
                     resultBadge.style.display = 'block';
                 }
                 
-                // Tampilkan opsi video (dengan metadata di BAWAH preview)
+                // Display videos
                 if (uniqueVideos.length > 0) {
-                    hasOptions = true;
-                    uniqueVideos.forEach((video, index) => {
-                        // Buat metadata HTML yang akan ditampilkan di bawah preview
-                        const statsHtml = `
-                            <div class="metadata">
-                                <h4>📝 Informasi Konten</h4>
-                                <div class="caption-text">${escapeHtml(metadata.caption)}</div>
-                                <div class="stats">
-                                    <div class="stat-item">
-                                        <span class="stat-icon">❤️</span>
-                                        <span>${metadata.likeCount || 'Tidak tersedia'}</span>
-                                        <span>suka</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-icon">💬</span>
-                                        <span>${metadata.commentCount || 'Tidak tersedia'}</span>
-                                        <span>komentar</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        const optionHtml = `
-                            <div class="option-card">
-                                <div class="option-title">
-                                    🎬 Download Video
-                                    <span class="badge badge-video">Dengan Audio</span>
-                                </div>
-                                <p style="color: #666; margin-bottom: 10px;">
-                                    📹 Format: MP4 | Kualitas HD<br>
-                                    ✅ Video lengkap dengan suara/audio
-                                </p>
-                                <a href="${video.url}" class="download-btn" download="${getFileName(video.url, 'video')}" target="_blank">
-                                    ⬇️ Download Video (MP4)
-                                </a>
-                                <div class="preview">
-                                    <video controls width="100%" style="max-height: 250px;">
-                                        <source src="${video.url}" type="video/mp4">
-                                        Browser Anda tidak support video preview
-                                    </video>
-                                </div>
-                                ${statsHtml}
-                            </div>
-                        `;
-                        optionsContainer.innerHTML += optionHtml;
+                    uniqueVideos.forEach(video => {
+                        optionsContainer.innerHTML += createVideoCard(video, metadata);
                     });
                 }
                 
-                // Tampilkan opsi gambar (dengan metadata di BAWAH preview)
+                // Display images
                 if (uniqueImages.length > 0) {
-                    hasOptions = true;
-                    uniqueImages.forEach((image, index) => {
-                        const statsHtml = `
-                            <div class="metadata">
-                                <h4>📝 Informasi Konten</h4>
-                                <div class="caption-text">${escapeHtml(metadata.caption)}</div>
-                                <div class="stats">
-                                    <div class="stat-item">
-                                        <span class="stat-icon">❤️</span>
-                                        <span>${metadata.likeCount || 'Tidak tersedia'}</span>
-                                        <span>suka</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-icon">💬</span>
-                                        <span>${metadata.commentCount || 'Tidak tersedia'}</span>
-                                        <span>komentar</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        const optionHtml = `
-                            <div class="option-card">
-                                <div class="option-title">
-                                    🖼️ Download Gambar
-                                    <span class="badge badge-image">Resolusi HD</span>
-                                </div>
-                                <p style="color: #666; margin-bottom: 10px;">
-                                    🖼️ Format: ${getImageFormat(image.url)} | Kualitas HD<br>
-                                    ✅ Gambar resolusi tinggi tanpa watermark
-                                </p>
-                                <a href="${image.url}" class="download-btn" download="${getFileName(image.url, 'image')}" target="_blank">
-                                    ⬇️ Download Gambar (HD)
-                                </a>
-                                <div class="preview">
-                                    <img src="${image.url}" alt="Preview" style="max-width: 100%; max-height: 250px; object-fit: contain;">
-                                </div>
-                                ${statsHtml}
-                            </div>
-                        `;
-                        optionsContainer.innerHTML += optionHtml;
+                    uniqueImages.forEach(image => {
+                        optionsContainer.innerHTML += createImageCard(image, metadata);
                     });
                 }
                 
-                if (hasOptions) {
+                if (uniqueVideos.length > 0 || uniqueImages.length > 0) {
                     downloadOptions.style.display = 'block';
                 } else {
                     resultBadge.style.display = 'block';
                     resultBadge.style.background = '#fff3cd';
                     resultBadge.style.color = '#856404';
-                    resultBadge.textContent = '⚠️ Tidak ditemukan konten yang bisa di-download. Coba URL Instagram lain (Reels atau Postingan publik)';
-                    errorDiv.style.display = 'block';
-                    errorDiv.innerHTML = 'Pastikan URL dari postingan/reels yang publik dan bukan story.';
+                    resultBadge.textContent = '⚠️ Tidak ditemukan konten yang bisa di-download';
                 }
                 
             } catch (error) {
-                console.error('Error:', error);
                 errorDiv.style.display = 'block';
-                errorDiv.innerHTML = `
-                    ❌ Error: ${error.message}<br><br>
-                    🔄 Coba langkah berikut:<br>
-                    • Refresh halaman (F5)<br>
-                    • Cek koneksi internet<br>
-                    • Tunggu 1-2 menit lalu coba lagi<br>
-                    • Coba URL Instagram lain
-                `;
+                errorDiv.innerHTML = `❌ Error: ${error.message}<br><br>🔄 Coba refresh halaman atau coba URL lain`;
                 debug.style.display = 'block';
             } finally {
                 loading.style.display = 'none';
             }
         }
         
-        // Escape HTML untuk keamanan
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        function createVideoCard(video, metadata) {
+            return `
+                <div class="option-card">
+                    <div class="option-title">
+                        🎬 Download Video
+                        <span class="badge-video">Dengan Audio</span>
+                    </div>
+                    <a href="${video.url}" class="download-btn" download="${getFileName(video.url, 'video')}" target="_blank">
+                        ⬇️ Download Video (MP4)
+                    </a>
+                    <div class="preview">
+                        <video controls width="100%">
+                            <source src="${video.url}" type="video/mp4">
+                        </video>
+                    </div>
+                    ${createMetadataHTML(metadata)}
+                </div>
+            `;
         }
         
-        // Extract semua URL dari objek
-        function extractAllUrls(obj, path = '', found = []) {
-            if (!obj || typeof obj !== 'object') return found;
+        function createImageCard(image, metadata) {
+            return `
+                <div class="option-card">
+                    <div class="option-title">
+                        🖼️ Download Gambar
+                        <span class="badge-image">Resolusi HD</span>
+                    </div>
+                    <a href="${image.url}" class="download-btn" download="${getFileName(image.url, 'image')}" target="_blank">
+                        ⬇️ Download Gambar (HD)
+                    </a>
+                    <div class="preview">
+                        <img src="${image.url}" alt="Preview" style="max-width: 100%;">
+                    </div>
+                    ${createMetadataHTML(metadata)}
+                </div>
+            `;
+        }
+        
+        function createMetadataHTML(metadata) {
+            return `
+                <div class="metadata">
+                    <h4>📝 Informasi Konten</h4>
+                    <div class="caption-text">${escapeHtml(metadata.caption || 'Tidak ada caption')}</div>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <span>❤️</span>
+                            <span>${metadata.likeCount || 'Tidak tersedia'}</span>
+                            <span>suka</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>💬</span>
+                            <span>${metadata.commentCount || 'Tidak tersedia'}</span>
+                            <span>komentar</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function extractMetadata(data) {
+            let caption = '';
+            let likeCount = null;
+            let commentCount = null;
             
-            for (let key in obj) {
-                const value = obj[key];
-                const currentPath = path ? `${path}.${key}` : key;
-                
-                if (typeof value === 'string') {
-                    if (value.startsWith('http://') || value.startsWith('https://')) {
-                        let type = 'unknown';
-                        const lowerValue = value.toLowerCase();
-                        const lowerKey = key.toLowerCase();
-                        
-                        if (lowerValue.includes('.mp4') || lowerKey.includes('video')) {
-                            type = 'video';
-                        } else if (lowerValue.includes('.jpg') || lowerValue.includes('.jpeg') || 
-                                   lowerValue.includes('.png') || lowerKey.includes('image') || 
-                                   lowerKey.includes('photo')) {
-                            type = 'image';
-                        }
-                        
-                        found.push({
-                            url: value,
-                            path: currentPath,
-                            type: type,
-                            key: key
-                        });
+            function deepSearch(obj) {
+                if (!obj || typeof obj !== 'object') return;
+                for (let key in obj) {
+                    const value = obj[key];
+                    const lowerKey = key.toLowerCase();
+                    
+                    if (!caption && (lowerKey === 'caption' || lowerKey === 'title' || lowerKey === 'text')) {
+                        if (typeof value === 'string' && value.length > 0) caption = value;
                     }
-                } else if (typeof value === 'object' && value !== null) {
-                    extractAllUrls(value, currentPath, found);
+                    
+                    if (likeCount === null && (lowerKey.includes('like') || lowerKey === 'likes')) {
+                        if (typeof value === 'number') likeCount = value;
+                        else if (typeof value === 'string' && !isNaN(parseInt(value))) likeCount = parseInt(value);
+                    }
+                    
+                    if (commentCount === null && (lowerKey.includes('comment') || lowerKey === 'comments')) {
+                        if (typeof value === 'number') commentCount = value;
+                        else if (typeof value === 'string' && !isNaN(parseInt(value))) commentCount = parseInt(value);
+                    }
+                    
+                    if (typeof value === 'object') deepSearch(value);
                 }
             }
             
+            deepSearch(data);
+            
+            const formatNumber = (num) => num ? num.toLocaleString('id-ID') : null;
+            
+            return {
+                caption: caption || 'Tidak ada caption',
+                likeCount: formatNumber(likeCount),
+                commentCount: formatNumber(commentCount)
+            };
+        }
+        
+        function extractAllUrls(obj, found = []) {
+            if (!obj || typeof obj !== 'object') return found;
+            for (let key in obj) {
+                const value = obj[key];
+                if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
+                    let type = 'unknown';
+                    if (value.includes('.mp4')) type = 'video';
+                    else if (value.includes('.jpg') || value.includes('.jpeg') || value.includes('.png')) type = 'image';
+                    found.push({ url: value, key: key, type: type });
+                } else if (typeof value === 'object') {
+                    extractAllUrls(value, found);
+                }
+            }
             return found;
         }
         
         function removeDuplicates(arr, key) {
             const seen = new Set();
             return arr.filter(item => {
-                const value = item[key];
-                if (seen.has(value)) return false;
-                seen.add(value);
+                if (seen.has(item[key])) return false;
+                seen.add(item[key]);
                 return true;
             });
         }
         
         function getFileName(url, type) {
-            const timestamp = new Date().getTime();
-            if (type === 'video') {
-                return `instagram_video_${timestamp}.mp4`;
-            } else if (type === 'image') {
-                if (url.includes('.jpg') || url.includes('.jpeg')) {
-                    return `instagram_image_${timestamp}.jpg`;
-                } else if (url.includes('.png')) {
-                    return `instagram_image_${timestamp}.png`;
-                }
-                return `instagram_image_${timestamp}.jpg`;
-            }
-            return `instagram_${timestamp}.mp4`;
+            const timestamp = Date.now();
+            if (type === 'video') return `instagram_video_${timestamp}.mp4`;
+            if (url.includes('.jpg')) return `instagram_image_${timestamp}.jpg`;
+            if (url.includes('.png')) return `instagram_image_${timestamp}.png`;
+            return `instagram_image_${timestamp}.jpg`;
         }
         
-        function getImageFormat(url) {
-            if (url.includes('.jpg') || url.includes('.jpeg')) return 'JPG';
-            if (url.includes('.png')) return 'PNG';
-            return 'Image';
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
         
         // Event listeners
-        document.getElementById('downloadBtn').addEventListener('click', () => {
+        document.getElementById('downloadBtn').onclick = () => {
             const url = document.getElementById('urlInput').value.trim();
             if (!url) {
-                const errorDiv = document.getElementById('error');
-                errorDiv.innerHTML = '❌ Masukkan URL Instagram terlebih dahulu!';
-                errorDiv.style.display = 'block';
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 3000);
+                document.getElementById('error').innerHTML = '❌ Masukkan URL Instagram!';
+                document.getElementById('error').style.display = 'block';
+                setTimeout(() => document.getElementById('error').style.display = 'none', 3000);
                 return;
             }
-            
-            if (!url.includes('instagram.com')) {
-                const errorDiv = document.getElementById('error');
-                errorDiv.innerHTML = '❌ URL harus mengandung instagram.com!';
-                errorDiv.style.display = 'block';
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 3000);
-                return;
-            }
-            
             downloadInstagram(url);
-        });
+        };
         
         document.querySelectorAll('.example-link').forEach(link => {
-            link.addEventListener('click', () => {
-                const url = link.dataset.url;
-                document.getElementById('urlInput').value = url;
-                downloadInstagram(url);
-            });
+            link.onclick = () => {
+                document.getElementById('urlInput').value = link.dataset.url;
+                downloadInstagram(link.dataset.url);
+            };
         });
         
-        document.getElementById('urlInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('downloadBtn').click();
-            }
-        });
+        document.getElementById('urlInput').onkeypress = (e) => {
+            if (e.key === 'Enter') document.getElementById('downloadBtn').click();
+        };
     </script>
 </body>
 </html>
