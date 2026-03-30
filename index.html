@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Downloader - Video & Gambar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>InstaSpark - Download Video & Gambar Instagram HD</title>
     <style>
         * {
             margin: 0;
@@ -12,96 +12,253 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0a0f;
             min-height: 100vh;
-            padding: 20px;
+            padding: 2rem 1.5rem;
+            position: relative;
+        }
+
+        /* Background decorative elements - dark mode */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
 
+        /* Glassmorphism Card - Dark Mode */
         .card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: rgba(18, 18, 24, 0.95);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(139, 92, 246, 0.2);
             overflow: hidden;
-            padding: 30px;
+            transition: transform 0.2s ease;
         }
 
+        .card-inner {
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 1rem; }
+            .card-inner { padding: 1.5rem; }
+        }
+
+        /* Header - Dark Mode */
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 2rem;
+        }
+
+        .logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+            padding: 0.5rem 1.2rem;
+            border-radius: 100px;
+            margin-bottom: 1.2rem;
+        }
+
+        .logo-badge span {
+            font-size: 1.8rem;
+        }
+
+        .logo-badge h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #a78bfa, #f472b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .header h1 {
-            font-size: 2rem;
-            color: #333;
-            margin-bottom: 10px;
+            font-size: 2.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
         }
 
         .header p {
-            color: #666;
+            color: #94a3b8;
+            font-weight: 500;
+            max-width: 450px;
+            margin: 0 auto;
         }
 
+        /* Input Group - Dark Mode */
         .input-group {
-            margin-bottom: 20px;
+            background: rgba(30, 30, 40, 0.8);
+            border-radius: 1.5rem;
+            padding: 0.2rem;
+            transition: all 0.2s;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .input-group:focus-within {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+            background: rgba(30, 30, 40, 1);
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: #e2e8f0;
+            margin-bottom: 0.6rem;
+            font-size: 0.9rem;
+        }
+
+        .url-wrapper {
+            display: flex;
+            align-items: center;
+            background: #1e1e28;
+            border-radius: 1.2rem;
+            overflow: hidden;
+            padding: 0 0.8rem;
+        }
+
+        .url-icon {
+            font-size: 1.3rem;
+            color: #6b7280;
         }
 
         input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e1e1;
-            border-radius: 10px;
-            font-size: 1rem;
+            flex: 1;
+            padding: 0.9rem 0.8rem;
+            border: none;
+            font-size: 0.95rem;
+            background: transparent;
+            font-weight: 500;
+            color: #f1f5f9;
+        }
+
+        input::placeholder {
+            color: #6b7280;
         }
 
         input:focus {
             outline: none;
-            border-color: #667eea;
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.9rem;
+            background: linear-gradient(105deg, #8b5cf6 0%, #ec489a 100%);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 1.2rem;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 0.8rem;
+            transition: all 0.25s;
+            box-shadow: 0 8px 18px -6px rgba(139, 92, 246, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         button:hover {
-            opacity: 0.9;
             transform: translateY(-2px);
+            filter: brightness(1.05);
+            box-shadow: 0 15px 25px -10px rgba(139, 92, 246, 0.6);
         }
 
+        /* Examples - Dark Mode */
+        .examples {
+            margin: 1.5rem 0 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .example-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #2d2d3a 0%, #25252f 100%);
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #e2e8f0;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            flex: 0 1 auto;
+            min-width: 140px;
+        }
+
+        .example-link:first-child {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%);
+            border-color: rgba(239, 68, 68, 0.4);
+        }
+
+        .example-link:last-child {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(52, 211, 153, 0.1) 100%);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        .example-link:hover {
+            background: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .example-link:first-child:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .example-link:last-child:hover {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        /* Loading Animation - Dark Mode */
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 2rem;
+            background: rgba(30, 30, 40, 0.6);
+            border-radius: 1.5rem;
+            margin: 1rem 0;
             display: none;
         }
 
         .spinner {
             width: 50px;
             height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #667eea;
+            border: 4px solid #2d2d3a;
+            border-top: 4px solid #ec489a;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
         }
 
         @keyframes spin {
@@ -109,233 +266,242 @@
             100% { transform: rotate(360deg); }
         }
 
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
+        .loading p {
+            color: #94a3b8;
+        }
+
+        /* Result badge - Dark Mode */
+        .result-badge {
+            background: linear-gradient(110deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            padding: 0.8rem 1rem;
+            border-radius: 1rem;
+            margin: 1rem 0 0;
+            text-align: center;
+            font-weight: 600;
+            color: #c4b5fd;
+            border-left: 4px solid #8b5cf6;
             display: none;
         }
 
-        .success {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            display: none;
-        }
-
+        /* Option Cards - Dark Mode */
         .download-options {
-            margin-top: 25px;
+            margin-top: 1.8rem;
             display: none;
         }
 
         .option-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 2px solid #e1e1e1;
-            transition: all 0.3s;
+            background: #1a1a24;
+            border-radius: 1.5rem;
+            margin-bottom: 1.8rem;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            overflow: hidden;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         .option-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #8b5cf6;
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            padding: 1.2rem 1.5rem 0.5rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .option-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 8px;
+            color: #f1f5f9;
         }
 
-        .option-title .badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: normal;
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 30px;
+            font-weight: 600;
         }
 
         .badge-video {
-            background: #dc3545;
-            color: white;
+            background: rgba(220, 38, 38, 0.2);
+            color: #f87171;
         }
 
         .badge-image {
-            background: #28a745;
-            color: white;
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .quality-info {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            padding: 0 1.5rem;
+            margin-bottom: 0.8rem;
         }
 
         .download-btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background: #007bff;
-            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #2d2d3a;
+            color: #f1f5f9;
+            padding: 0.7rem 1.6rem;
+            border-radius: 2rem;
             text-decoration: none;
-            border-radius: 8px;
             font-weight: 600;
-            margin-top: 10px;
-            transition: all 0.3s;
+            margin: 0 1.5rem 1rem 1.5rem;
+            transition: all 0.2s;
             border: none;
             cursor: pointer;
+            font-size: 0.9rem;
         }
 
         .download-btn:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
+            background: #8b5cf6;
+            transform: scale(0.98);
+            gap: 12px;
         }
 
         .preview {
-            margin-top: 15px;
-            max-width: 100%;
-            border-radius: 10px;
-            overflow: hidden;
+            padding: 0 1.5rem 1rem 1.5rem;
         }
 
         .preview video, .preview img {
             max-width: 100%;
-            max-height: 300px;
-            border-radius: 10px;
+            max-height: 280px;
+            border-radius: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            background: #0f0f14;
         }
 
-        /* Metadata styles - dipindah ke bawah preview */
+        /* Metadata Styling - Dark Mode (tanpa username) */
         .metadata {
-            background: #f0f2f5;
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .metadata h4 {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 10px;
-            font-weight: 600;
+            background: #12121a;
+            border-radius: 1rem;
+            margin: 0.5rem 1.5rem 1.5rem 1.5rem;
+            padding: 1rem 1.2rem;
+            border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
         .caption-text {
             font-size: 0.9rem;
-            color: #333;
+            color: #cbd5e1;
             line-height: 1.5;
-            margin-bottom: 12px;
+            margin-bottom: 0.9rem;
             word-break: break-word;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem;
+            border-radius: 12px;
         }
 
         .stats {
             display: flex;
-            gap: 20px;
+            gap: 1.8rem;
             flex-wrap: wrap;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
+            padding-top: 0.8rem;
         }
 
         .stat-item {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             font-size: 0.85rem;
-            color: #555;
+            font-weight: 500;
+            color: #94a3b8;
         }
 
         .stat-icon {
             font-size: 1rem;
         }
 
-        .examples {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
+        /* Debug section - Dark Mode */
+        .debug {
+            background: #0a0a0f;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-family: monospace;
+            font-size: 0.7rem;
+            display: none;
+            border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
-        .example-link {
-            display: inline-block;
-            margin: 5px;
-            padding: 8px 15px;
-            background: #e1e1e1;
-            border-radius: 8px;
-            font-size: 0.85rem;
+        .debug details summary {
+            color: #94a3b8;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .example-link:hover {
-            background: #667eea;
-            color: white;
+        .error {
+            background: rgba(244, 63, 94, 0.1);
+            border-left: 5px solid #f43f5e;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            display: none;
+            color: #fda4af;
         }
 
         .footer {
             text-align: center;
-            margin-top: 20px;
-            color: white;
-            font-size: 0.85rem;
+            margin-top: 2rem;
+            color: #6b7280;
+            font-size: 0.75rem;
         }
 
         hr {
-            margin: 20px 0;
-            border: none;
-            border-top: 1px solid #e1e1e1;
-        }
-
-        .debug {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 11px;
-            display: none;
-        }
-
-        .debug pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .result-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
+            margin: 1rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(139, 92, 246, 0.3), transparent);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
+<div class="container">
+    <div class="card">
+        <div class="card-inner">
             <div class="header">
-                <div style="font-size: 3rem;">📸🎬</div>
-                <h1>Instagram Downloader</h1>
-                <p>Download Video (Dengan Audio) atau Gambar HD</p>
+                <div class="logo-badge">
+                    <span>✨</span>
+                    <h2>InstaSpark</h2>
+                </div>
+                <h1>Unduh Media Instagram</h1>
+                <p>Video + Audio original • Gambar HD tanpa watermark</p>
             </div>
 
             <div class="input-group">
-                <label>🔗 URL Instagram</label>
-                <input type="text" id="urlInput" placeholder="https://www.instagram.com/reel/xxxxx atau https://www.instagram.com/p/xxxxx">
+                <label>🔗 Tempel tautan Instagram</label>
+                <div class="url-wrapper">
+                    <span class="url-icon">📌</span>
+                    <input type="text" id="urlInput" placeholder="https://www.instagram.com/reel/... atau /p/...">
+                </div>
+                <button id="downloadBtn">
+                    <span>⚡</span> Proses & Ambil Media
+                </button>
             </div>
 
-            <button id="downloadBtn">🔍 Proses URL</button>
-
+            <!-- Contoh Reel (kiri) dan Contoh Foto (kanan) -->
             <div class="examples">
-                <p>📌 Contoh URL (klik untuk coba):</p>
-                <span class="example-link" data-url="https://www.instagram.com/reel/DAJhSNxSm8Q">🎬 Reel Video</span>
-                <span class="example-link" data-url="https://www.instagram.com/p/DFLxAuvTjYb">📷 Post Gambar</span>
+                <span class="example-link" data-url="https://www.instagram.com/reel/DAJhSNxSm8Q">
+                    🎬 Contoh Reel
+                </span>
+                <span class="example-link" data-url="https://www.instagram.com/p/DFLxAuvTjYb">
+                    📸 Contoh Foto
+                </span>
             </div>
 
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <p>🔍 Menganalisis konten Instagram...</p>
-                <p style="font-size: 0.9rem; margin-top: 10px;">Mohon tunggu 3-5 detik</p>
+                <p style="font-weight: 500;">🔍 Menganalisis konten dari Instagram ...</p>
+                <p style="font-size: 0.8rem; margin-top: 8px;">server membutuhkan waktu 3-6 detik</p>
             </div>
 
             <div class="error" id="error"></div>
@@ -347,420 +513,287 @@
 
             <div class="debug" id="debug">
                 <details>
-                    <summary style="color: #aaa; cursor: pointer;">🔧 Technical Info (Klik jika tidak muncul tombol)</summary>
-                    <pre id="debugContent">Loading...</pre>
+                    <summary>🔧 Informasi teknis (jika terjadi kendala)</summary>
+                    <pre id="debugContent" style="white-space: pre-wrap; word-wrap: break-word; margin-top: 10px; color: #94a3b8;">Loading...</pre>
                 </details>
             </div>
         </div>
-        <div class="footer">
-            <p>Instagram Downloader - Support Video (Dengan Audio) & Gambar HD</p>
-        </div>
     </div>
+    <div class="footer">
+        <p>⚡ InstaSpark — Downloader cepat & gratis. Mendukung Reels, Video, Carousel, dan Gambar HD.</p>
+    </div>
+</div>
 
-    <script>
-        const API_CONFIG = {
-            url: "https://api.termai.cc",
-            key: "Bell409"
-        };
+<script>
+    const API_CONFIG = {
+        url: "https://api.termai.cc",
+        key: "Bell409"
+    };
 
-        // Fungsi untuk mengekstrak metadata (caption, like, comment) dari response API - lebih agresif
-        function extractMetadata(data) {
-            let caption = '';
-            let likeCount = null;
-            let commentCount = null;
-            
-            // Fungsi rekursif untuk mencari semua kemungkinan data
-            function deepSearch(obj, depth = 0) {
-                if (depth > 10 || !obj || typeof obj !== 'object') return;
-                
-                for (let key in obj) {
-                    const value = obj[key];
-                    const lowerKey = key.toLowerCase();
-                    
-                    // Cari caption / title / text
-                    if (!caption && (lowerKey === 'caption' || lowerKey === 'title' || lowerKey === 'text' || 
-                        lowerKey === 'description' || lowerKey === 'content' || lowerKey === 'message')) {
-                        if (typeof value === 'string' && value.length > 0 && value.length < 5000) {
-                            caption = value;
-                        }
-                    }
-                    
-                    // Cari like count
-                    if (likeCount === null && (lowerKey.includes('like') || lowerKey === 'likes' || lowerKey === 'like_count')) {
-                        if (typeof value === 'number') {
-                            likeCount = value;
-                        } else if (typeof value === 'string' && !isNaN(parseInt(value))) {
-                            likeCount = parseInt(value);
-                        }
-                    }
-                    
-                    // Cari comment count
-                    if (commentCount === null && (lowerKey.includes('comment') || lowerKey === 'comments' || lowerKey === 'comment_count')) {
-                        if (typeof value === 'number') {
-                            commentCount = value;
-                        } else if (typeof value === 'string' && !isNaN(parseInt(value))) {
-                            commentCount = parseInt(value);
-                        }
-                    }
-                    
-                    // Rekursif
-                    if (typeof value === 'object' && value !== null) {
-                        deepSearch(value, depth + 1);
-                    }
-                }
-            }
-            
-            deepSearch(data);
-            
-            // Format angka dengan pemisah ribuan
-            const formatNumber = (num) => {
-                if (num === null || num === undefined) return null;
-                if (typeof num === 'string') num = parseInt(num);
-                if (isNaN(num)) return null;
-                return num.toLocaleString('id-ID');
-            };
-            
-            // Bersihkan caption dari karakter aneh
-            if (caption) {
-                caption = caption.replace(/\\n/g, '\n').replace(/\\"/g, '"').trim();
-            }
-            
-            return {
-                caption: caption || 'Tidak ada caption',
-                likeCount: formatNumber(likeCount),
-                commentCount: formatNumber(commentCount),
-                hasData: likeCount !== null || commentCount !== null
-            };
-        }
-
-        async function downloadInstagram(url) {
-            const loading = document.getElementById('loading');
-            const errorDiv = document.getElementById('error');
-            const downloadOptions = document.getElementById('downloadOptions');
-            const optionsContainer = document.getElementById('optionsContainer');
-            const debug = document.getElementById('debug');
-            const debugContent = document.getElementById('debugContent');
-            const resultBadge = document.getElementById('resultBadge');
-            
-            loading.style.display = 'block';
-            errorDiv.style.display = 'none';
-            downloadOptions.style.display = 'none';
-            debug.style.display = 'none';
-            resultBadge.style.display = 'none';
-            optionsContainer.innerHTML = '';
-            
-            try {
-                const apiUrl = `${API_CONFIG.url}/api/downloader/instagram?url=${encodeURIComponent(url)}&key=${API_CONFIG.key}`;
-                console.log('Requesting:', apiUrl);
-                
-                const response = await fetch(apiUrl);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log('Response:', data);
-                
-                debugContent.textContent = JSON.stringify(data, null, 2);
-                debug.style.display = 'block';
-                
-                // Extract metadata (caption, like, comment)
-                const metadata = extractMetadata(data);
-                console.log('Extracted metadata:', metadata);
-                
-                // Kumpulkan semua URL dari response
-                const allUrls = extractAllUrls(data);
-                console.log('All URLs found:', allUrls);
-                
-                // Pisahkan video dan gambar
-                const videoUrls = [];
-                const imageUrls = [];
-                
-                allUrls.forEach(item => {
-                    const urlLower = item.url.toLowerCase();
-                    
-                    // Deteksi video (MP4)
-                    if (urlLower.includes('.mp4') || item.type === 'video' || 
-                        (item.key && (item.key.includes('video') || item.key.includes('url')) && !item.key.includes('thumb'))) {
-                        if (!urlLower.includes('thumb') && !item.key?.includes('thumbnail')) {
-                            videoUrls.push(item);
-                        }
-                    }
-                    // Deteksi gambar (JPG, PNG, JPEG)
-                    else if (urlLower.includes('.jpg') || urlLower.includes('.jpeg') || urlLower.includes('.png') || 
-                             item.type === 'image' || (item.key && (item.key.includes('image') || item.key.includes('photo')))) {
-                        if (!item.key?.includes('profile') && !item.key?.includes('avatar')) {
-                            imageUrls.push(item);
-                        }
-                    }
-                });
-                
-                // Hapus duplikat berdasarkan URL
-                const uniqueVideos = removeDuplicates(videoUrls, 'url');
-                const uniqueImages = removeDuplicates(imageUrls, 'url');
-                
-                console.log('Videos:', uniqueVideos);
-                console.log('Images:', uniqueImages);
-                
-                let hasOptions = false;
-                
-                // Tampilkan badge hasil
-                const videoCount = uniqueVideos.length;
-                const imageCount = uniqueImages.length;
-                
-                if (videoCount > 0 || imageCount > 0) {
-                    let resultText = '';
-                    if (videoCount > 0 && imageCount > 0) {
-                        resultText = `✅ Berhasil ditemukan ${videoCount} video dan ${imageCount} gambar`;
-                    } else if (videoCount > 0) {
-                        resultText = `✅ Berhasil ditemukan ${videoCount} video`;
-                    } else if (imageCount > 0) {
-                        resultText = `✅ Berhasil ditemukan ${imageCount} gambar`;
-                    }
-                    resultBadge.textContent = resultText;
-                    resultBadge.style.display = 'block';
-                }
-                
-                // Tampilkan opsi video (dengan metadata di BAWAH preview)
-                if (uniqueVideos.length > 0) {
-                    hasOptions = true;
-                    uniqueVideos.forEach((video, index) => {
-                        // Buat metadata HTML yang akan ditampilkan di bawah preview
-                        const statsHtml = `
-                            <div class="metadata">
-                                <h4>📝 Informasi Konten</h4>
-                                <div class="caption-text">${escapeHtml(metadata.caption)}</div>
-                                <div class="stats">
-                                    <div class="stat-item">
-                                        <span class="stat-icon">❤️</span>
-                                        <span>${metadata.likeCount || 'Tidak tersedia'}</span>
-                                        <span>suka</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-icon">💬</span>
-                                        <span>${metadata.commentCount || 'Tidak tersedia'}</span>
-                                        <span>komentar</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        const optionHtml = `
-                            <div class="option-card">
-                                <div class="option-title">
-                                    🎬 Download Video
-                                    <span class="badge badge-video">Dengan Audio</span>
-                                </div>
-                                <p style="color: #666; margin-bottom: 10px;">
-                                    📹 Format: MP4 | Kualitas HD<br>
-                                    ✅ Video lengkap dengan suara/audio
-                                </p>
-                                <a href="${video.url}" class="download-btn" download="${getFileName(video.url, 'video')}" target="_blank">
-                                    ⬇️ Download Video (MP4)
-                                </a>
-                                <div class="preview">
-                                    <video controls width="100%" style="max-height: 250px;">
-                                        <source src="${video.url}" type="video/mp4">
-                                        Browser Anda tidak support video preview
-                                    </video>
-                                </div>
-                                ${statsHtml}
-                            </div>
-                        `;
-                        optionsContainer.innerHTML += optionHtml;
-                    });
-                }
-                
-                // Tampilkan opsi gambar (dengan metadata di BAWAH preview)
-                if (uniqueImages.length > 0) {
-                    hasOptions = true;
-                    uniqueImages.forEach((image, index) => {
-                        const statsHtml = `
-                            <div class="metadata">
-                                <h4>📝 Informasi Konten</h4>
-                                <div class="caption-text">${escapeHtml(metadata.caption)}</div>
-                                <div class="stats">
-                                    <div class="stat-item">
-                                        <span class="stat-icon">❤️</span>
-                                        <span>${metadata.likeCount || 'Tidak tersedia'}</span>
-                                        <span>suka</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-icon">💬</span>
-                                        <span>${metadata.commentCount || 'Tidak tersedia'}</span>
-                                        <span>komentar</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        const optionHtml = `
-                            <div class="option-card">
-                                <div class="option-title">
-                                    🖼️ Download Gambar
-                                    <span class="badge badge-image">Resolusi HD</span>
-                                </div>
-                                <p style="color: #666; margin-bottom: 10px;">
-                                    🖼️ Format: ${getImageFormat(image.url)} | Kualitas HD<br>
-                                    ✅ Gambar resolusi tinggi tanpa watermark
-                                </p>
-                                <a href="${image.url}" class="download-btn" download="${getFileName(image.url, 'image')}" target="_blank">
-                                    ⬇️ Download Gambar (HD)
-                                </a>
-                                <div class="preview">
-                                    <img src="${image.url}" alt="Preview" style="max-width: 100%; max-height: 250px; object-fit: contain;">
-                                </div>
-                                ${statsHtml}
-                            </div>
-                        `;
-                        optionsContainer.innerHTML += optionHtml;
-                    });
-                }
-                
-                if (hasOptions) {
-                    downloadOptions.style.display = 'block';
-                } else {
-                    resultBadge.style.display = 'block';
-                    resultBadge.style.background = '#fff3cd';
-                    resultBadge.style.color = '#856404';
-                    resultBadge.textContent = '⚠️ Tidak ditemukan konten yang bisa di-download. Coba URL Instagram lain (Reels atau Postingan publik)';
-                    errorDiv.style.display = 'block';
-                    errorDiv.innerHTML = 'Pastikan URL dari postingan/reels yang publik dan bukan story.';
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                errorDiv.style.display = 'block';
-                errorDiv.innerHTML = `
-                    ❌ Error: ${error.message}<br><br>
-                    🔄 Coba langkah berikut:<br>
-                    • Refresh halaman (F5)<br>
-                    • Cek koneksi internet<br>
-                    • Tunggu 1-2 menit lalu coba lagi<br>
-                    • Coba URL Instagram lain
-                `;
-                debug.style.display = 'block';
-            } finally {
-                loading.style.display = 'none';
-            }
-        }
+    // Ekstrak metadata (caption, like, comment) - tanpa username
+    function extractMetadata(data) {
+        let caption = '';
+        let likeCount = null;
+        let commentCount = null;
         
-        // Escape HTML untuk keamanan
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Extract semua URL dari objek
-        function extractAllUrls(obj, path = '', found = []) {
-            if (!obj || typeof obj !== 'object') return found;
-            
+        function deepSearch(obj, depth = 0) {
+            if (depth > 12 || !obj || typeof obj !== 'object') return;
             for (let key in obj) {
                 const value = obj[key];
-                const currentPath = path ? `${path}.${key}` : key;
+                const lowerKey = key.toLowerCase();
                 
-                if (typeof value === 'string') {
-                    if (value.startsWith('http://') || value.startsWith('https://')) {
-                        let type = 'unknown';
-                        const lowerValue = value.toLowerCase();
-                        const lowerKey = key.toLowerCase();
-                        
-                        if (lowerValue.includes('.mp4') || lowerKey.includes('video')) {
-                            type = 'video';
-                        } else if (lowerValue.includes('.jpg') || lowerValue.includes('.jpeg') || 
-                                   lowerValue.includes('.png') || lowerKey.includes('image') || 
-                                   lowerKey.includes('photo')) {
-                            type = 'image';
-                        }
-                        
-                        found.push({
-                            url: value,
-                            path: currentPath,
-                            type: type,
-                            key: key
-                        });
-                    }
-                } else if (typeof value === 'object' && value !== null) {
-                    extractAllUrls(value, currentPath, found);
+                // Cari caption
+                if (!caption && (lowerKey === 'caption' || lowerKey === 'title' || lowerKey === 'text' || lowerKey === 'description' || lowerKey === 'content')) {
+                    if (typeof value === 'string' && value.length > 0 && value.length < 5000) caption = value;
+                    else if (value && typeof value === 'object' && value.text && typeof value.text === 'string') caption = value.text;
                 }
-            }
-            
-            return found;
-        }
-        
-        function removeDuplicates(arr, key) {
-            const seen = new Set();
-            return arr.filter(item => {
-                const value = item[key];
-                if (seen.has(value)) return false;
-                seen.add(value);
-                return true;
-            });
-        }
-        
-        function getFileName(url, type) {
-            const timestamp = new Date().getTime();
-            if (type === 'video') {
-                return `instagram_video_${timestamp}.mp4`;
-            } else if (type === 'image') {
-                if (url.includes('.jpg') || url.includes('.jpeg')) {
-                    return `instagram_image_${timestamp}.jpg`;
-                } else if (url.includes('.png')) {
-                    return `instagram_image_${timestamp}.png`;
+                // Like count
+                if (likeCount === null && (lowerKey.includes('like') || lowerKey === 'likes' || lowerKey === 'like_count')) {
+                    if (typeof value === 'number') likeCount = value;
+                    else if (typeof value === 'string' && !isNaN(parseInt(value))) likeCount = parseInt(value);
+                    else if (value && typeof value === 'object' && value.count !== undefined) likeCount = value.count;
                 }
-                return `instagram_image_${timestamp}.jpg`;
+                // Comment count
+                if (commentCount === null && (lowerKey.includes('comment') || lowerKey === 'comments' || lowerKey === 'comment_count')) {
+                    if (typeof value === 'number') commentCount = value;
+                    else if (typeof value === 'string' && !isNaN(parseInt(value))) commentCount = parseInt(value);
+                    else if (value && typeof value === 'object' && value.count !== undefined) commentCount = value.count;
+                }
+                if (typeof value === 'object' && value !== null) deepSearch(value, depth + 1);
             }
-            return `instagram_${timestamp}.mp4`;
         }
+        deepSearch(data);
         
-        function getImageFormat(url) {
-            if (url.includes('.jpg') || url.includes('.jpeg')) return 'JPG';
-            if (url.includes('.png')) return 'PNG';
-            return 'Image';
+        const formatNumber = (num) => {
+            if (num === null || num === undefined) return null;
+            if (typeof num === 'string') num = parseInt(num);
+            if (isNaN(num)) return null;
+            return num.toLocaleString('id-ID');
+        };
+        
+        if (caption) caption = caption.replace(/\\n/g, '\n').replace(/\\"/g, '"').trim();
+        return {
+            caption: caption || '',
+            likeCount: formatNumber(likeCount),
+            commentCount: formatNumber(commentCount),
+            hasData: likeCount !== null || commentCount !== null
+        };
+    }
+
+    function extractAllUrls(obj, path = '', found = []) {
+        if (!obj || typeof obj !== 'object') return found;
+        for (let key in obj) {
+            const value = obj[key];
+            if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
+                let type = 'unknown';
+                const lowerValue = value.toLowerCase();
+                const lowerKey = key.toLowerCase();
+                if (lowerValue.includes('.mp4') || lowerKey.includes('video')) type = 'video';
+                else if (lowerValue.includes('.jpg') || lowerValue.includes('.jpeg') || lowerValue.includes('.png') || lowerKey.includes('image') || lowerKey.includes('photo')) type = 'image';
+                found.push({ url: value, path: path, type: type, key: key });
+            } else if (typeof value === 'object' && value !== null) {
+                extractAllUrls(value, path, found);
+            }
         }
-        
-        // Event listeners
-        document.getElementById('downloadBtn').addEventListener('click', () => {
-            const url = document.getElementById('urlInput').value.trim();
-            if (!url) {
-                const errorDiv = document.getElementById('error');
-                errorDiv.innerHTML = '❌ Masukkan URL Instagram terlebih dahulu!';
-                errorDiv.style.display = 'block';
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 3000);
-                return;
-            }
-            
-            if (!url.includes('instagram.com')) {
-                const errorDiv = document.getElementById('error');
-                errorDiv.innerHTML = '❌ URL harus mengandung instagram.com!';
-                errorDiv.style.display = 'block';
-                setTimeout(() => {
-                    errorDiv.style.display = 'none';
-                }, 3000);
-                return;
-            }
-            
-            downloadInstagram(url);
+        return found;
+    }
+
+    function removeDuplicates(arr, key) {
+        const seen = new Set();
+        return arr.filter(item => {
+            const val = item[key];
+            if (seen.has(val)) return false;
+            seen.add(val);
+            return true;
         });
-        
-        document.querySelectorAll('.example-link').forEach(link => {
-            link.addEventListener('click', () => {
-                const url = link.dataset.url;
-                document.getElementById('urlInput').value = url;
-                downloadInstagram(url);
+    }
+
+    function getFileName(url, type) {
+        const ts = Date.now();
+        if (type === 'video') return `instaspark_video_${ts}.mp4`;
+        if (type === 'image') {
+            if (url.includes('.png')) return `instaspark_image_${ts}.png`;
+            return `instaspark_image_${ts}.jpg`;
+        }
+        return `instaspark_media_${ts}.mp4`;
+    }
+
+    function getImageFormat(url) {
+        if (url.includes('.png')) return 'PNG';
+        return 'JPG (HD)';
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    async function downloadInstagram(url) {
+        const loading = document.getElementById('loading');
+        const errorDiv = document.getElementById('error');
+        const downloadOptionsDiv = document.getElementById('downloadOptions');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const debugDiv = document.getElementById('debug');
+        const debugContent = document.getElementById('debugContent');
+        const resultBadge = document.getElementById('resultBadge');
+
+        loading.style.display = 'block';
+        errorDiv.style.display = 'none';
+        downloadOptionsDiv.style.display = 'none';
+        debugDiv.style.display = 'none';
+        resultBadge.style.display = 'none';
+        optionsContainer.innerHTML = '';
+
+        try {
+            const apiUrl = `${API_CONFIG.url}/api/downloader/instagram?url=${encodeURIComponent(url)}&key=${API_CONFIG.key}`;
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            debugContent.textContent = JSON.stringify(data, null, 2);
+            debugDiv.style.display = 'block';
+
+            const metadata = extractMetadata(data);
+            const allUrls = extractAllUrls(data);
+            const videoUrls = [], imageUrls = [];
+
+            allUrls.forEach(item => {
+                const urlLow = item.url.toLowerCase();
+                if (urlLow.includes('.mp4') || item.type === 'video' || (item.key && (item.key.includes('video') || item.key.includes('url')) && !item.key.includes('thumb'))) {
+                    if (!urlLow.includes('thumb') && !item.key?.includes('thumbnail')) videoUrls.push(item);
+                } else if (urlLow.includes('.jpg') || urlLow.includes('.jpeg') || urlLow.includes('.png') || item.type === 'image' || (item.key && (item.key.includes('image') || item.key.includes('photo')))) {
+                    if (!item.key?.includes('profile') && !item.key?.includes('avatar')) imageUrls.push(item);
+                }
             });
-        });
-        
-        document.getElementById('urlInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('downloadBtn').click();
+
+            const uniqueVideos = removeDuplicates(videoUrls, 'url');
+            const uniqueImages = removeDuplicates(imageUrls, 'url');
+
+            let hasOptions = false;
+            const videoCount = uniqueVideos.length;
+            const imageCount = uniqueImages.length;
+
+            if (videoCount + imageCount > 0) {
+                let resultText = '';
+                if (videoCount && imageCount) resultText = `✅ ${videoCount} video + ${imageCount} gambar siap diunduh!`;
+                else if (videoCount) resultText = `✅ ${videoCount} video berkualitas HD ditemukan`;
+                else if (imageCount) resultText = `✅ ${imageCount} gambar resolusi tinggi siap`;
+                resultBadge.textContent = resultText;
+                resultBadge.style.display = 'block';
             }
+
+            // Render metadata tanpa username
+            const renderMetadata = (meta) => `
+                <div class="metadata">
+                    ${meta.caption ? `<div class="caption-text">📝 ${escapeHtml(meta.caption.substring(0, 220))}${meta.caption.length > 220 ? '...' : ''}</div>` : '<div class="caption-text">✨ Tidak ada caption</div>'}
+                    <div class="stats">
+                        <div class="stat-item"><span class="stat-icon">❤️</span> ${meta.likeCount || '0'} suka</div>
+                        <div class="stat-item"><span class="stat-icon">💬</span> ${meta.commentCount || '0'} komentar</div>
+                    </div>
+                </div>
+            `;
+
+            if (uniqueVideos.length) {
+                hasOptions = true;
+                uniqueVideos.forEach(video => {
+                    const card = document.createElement('div');
+                    card.className = 'option-card';
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div class="option-title">
+                                🎬 Video Original <span class="badge badge-video">MP4 + Audio</span>
+                            </div>
+                        </div>
+                        <div class="quality-info">📀 Kualitas HD | Suara jernih • Unduh sekali klik</div>
+                        <a href="${video.url}" class="download-btn" download="${getFileName(video.url, 'video')}" target="_blank">
+                            ⬇️ Unduh Video (MP4)
+                        </a>
+                        <div class="preview">
+                            <video controls preload="metadata" style="max-width:100%; max-height:250px; border-radius:16px;">
+                                <source src="${video.url}" type="video/mp4">
+                            </video>
+                        </div>
+                        ${renderMetadata(metadata)}
+                    `;
+                    optionsContainer.appendChild(card);
+                });
+            }
+
+            if (uniqueImages.length) {
+                hasOptions = true;
+                uniqueImages.forEach(image => {
+                    const card = document.createElement('div');
+                    card.className = 'option-card';
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div class="option-title">
+                                🖼️ Gambar HD <span class="badge badge-image">${getImageFormat(image.url)}</span>
+                            </div>
+                        </div>
+                        <div class="quality-info">✨ Tanpa watermark • Resolusi asli</div>
+                        <a href="${image.url}" class="download-btn" download="${getFileName(image.url, 'image')}" target="_blank">
+                            ⬇️ Unduh Gambar (HD)
+                        </a>
+                        <div class="preview">
+                            <img src="${image.url}" alt="preview instagram" style="max-width:100%; max-height:260px; object-fit: contain; border-radius: 14px;">
+                        </div>
+                        ${renderMetadata(metadata)}
+                    `;
+                    optionsContainer.appendChild(card);
+                });
+            }
+
+            if (hasOptions) {
+                downloadOptionsDiv.style.display = 'block';
+            } else {
+                resultBadge.style.display = 'block';
+                resultBadge.style.background = 'rgba(180, 83, 9, 0.2)';
+                resultBadge.style.color = '#fbbf24';
+                resultBadge.textContent = '⚠️ Tidak menemukan media yang valid. Pastikan URL adalah postingan publik (Reel / Foto / Video).';
+                errorDiv.style.display = 'block';
+                errorDiv.innerHTML = 'URL tidak mengandung media yang bisa diunduh. Coba tautan Instagram lain (Reels atau postingan dengan gambar/video).';
+            }
+
+        } catch (error) {
+            console.error(error);
+            errorDiv.style.display = 'block';
+            errorDiv.innerHTML = `❌ Gagal memproses: ${error.message}<br><br>🔄 Saran: periksa URL, pastikan publik, atau coba lagi nanti.`;
+            debugDiv.style.display = 'block';
+        } finally {
+            loading.style.display = 'none';
+        }
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+        const url = document.getElementById('urlInput').value.trim();
+        const errorDiv = document.getElementById('error');
+        if (!url) {
+            errorDiv.innerHTML = '⚠️ Masukkan URL Instagram terlebih dahulu!';
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 3000);
+            return;
+        }
+        if (!url.includes('instagram.com')) {
+            errorDiv.innerHTML = '❌ URL harus mengandung instagram.com';
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 3000);
+            return;
+        }
+        downloadInstagram(url);
+    });
+
+    document.querySelectorAll('.example-link').forEach(link => {
+        link.addEventListener('click', () => {
+            const demoUrl = link.dataset.url;
+            document.getElementById('urlInput').value = demoUrl;
+            downloadInstagram(demoUrl);
         });
-    </script>
+    });
+
+    document.getElementById('urlInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') document.getElementById('downloadBtn').click();
+    });
+</script>
 </body>
 </html>
